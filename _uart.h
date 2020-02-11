@@ -13,7 +13,7 @@
 
 #define UDRE_FLAG_MASK	1<<5
 #define TXC_FLAG_MASK	1<<6
-#define RXC_FLAG_MASK	0x80
+#define RXC_FLAG_MASK	1<<7
 
 /*BAUD RATE Configuration >> will be calculated*/
 typedef enum En_Uart_BaudRate{
@@ -64,5 +64,7 @@ void _uartTransmitChar(uint8_t Data);
 void _uartTransmitStr(uint8_t* Data);
 
 void _uartRecieveChar(uint8_t* Data);
+
+void _uartAPP(void);
  
 #endif /* _UART_H_ */

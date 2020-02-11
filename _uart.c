@@ -4,6 +4,7 @@
 #include "interrupts.h"
 #include "gpio.h"
 #include "_uart.h"
+#include "led.h"
 
 static volatile uint16_t dataCounter=0;
 static volatile uint8_t dataByteTransmit;
@@ -91,10 +92,46 @@ void _uartTransmitStr(uint8_t* Data){
 }
 
 void _uartRecieveChar(uint8_t* Data){
-	while(!(UCSRA & RXC_FLAG_MASK));//lesa el buffer mana2alsh el data lel transmit shift reg
+	while((UCSRA & RXC_FLAG_MASK)==0);//lesa el buffer mana2alsh el data lel transmit shift reg
 	(*Data) = UDR;
 }
 
+void _uartAPP(void){
+	
+	UART_Config uart_config;
+	uint8_t recievedChar;
+	
+	uart_config.BaudRate = 9600;
+	uart_config.DataByte =_8BIT_DATA;
+	uart_config.InterruptStatus = _NO_POLLING;
+	uart_config.Parity = _DIS_PARITY;
+	uart_config.StopBits = _1_STOP_BIT;
+	uart_config.Speed= _DOUBLE_SPEED;
+	
+	Led_Init(LED_0);
+	Led_Init(LED_1);
+	Led_Init(LED_2);
+	Led_Init(LED_3);
+	
+	_uartInit(uart_config);
+	_uartTransmitStr("Please Enter the number of the led (0~3) to toggle the led with the same Number: ");
+	while(1){
+		_uartRecieveChar(&recievedChar);
+		if(recievedChar == '0'){
+			Led_Toggle(LED_0);
+		}
+		else if(recievedChar == '1'){
+			Led_Toggle(LED_1);
+		}
+		else if(recievedChar == '2'){
+			Led_Toggle(LED_2);
+		}
+		else if(recievedChar == '3'){
+			Led_Toggle(LED_3);
+		}
+		
+	}
+}
 
 _ISR__(USART_UDRE_vect){
 	
