@@ -8,13 +8,13 @@
 #include "SPI__.h"
 #include "timers.h"
 
-extern void _SPIInitMaster(SPI_clk clockSPI ){
-		//// status register
-		SPSR = 0 ;
+extern void _SPIInitMaster(SPI_clk clockSPI ,SPI_mode phasePolarityMode,SPI_DataOrder dataorder ){
+		//// clear status register
+		SPSR = ZERO ;
 		
 		/// clear control mode
 		
-		SPCR = 0 ;
+		SPCR = ZERO ;
 		
 		// master or slave bit 4 
 		SPCR |= Master_SPI ; 
@@ -23,68 +23,76 @@ extern void _SPIInitMaster(SPI_clk clockSPI ){
 		 
 		SPCR|=clockSPI ;
 		
+		/// data order update
+		
+		SPCR|=dataorder ;
+		
 		// set phase bit2 and polarity bit3
 		
-		 SPCR |= 0x00;
+		 SPCR |= phasePolarityMode;
 		 
 ////// GPIO set output and input 
  // ss bit4
-gpioPinDirection(GPIOB ,BIT4,OUTPUT) ;
+gpioPinDirection(SS_PORT ,SS_PIN,OUTPUT) ;
 
 //MOSI bit5
 
-gpioPinDirection(GPIOB ,BIT5,OUTPUT) ;
+gpioPinDirection(MOSI_PORT ,MOSI_PIN,OUTPUT) ;
 
 //MISO bit6
 
-gpioPinDirection(GPIOB ,BIT6,INPUT) ;
+gpioPinDirection(MISO_PORT ,MISO_PIN,INPUT) ;
 
 //SCK bit 7
 
-gpioPinDirection(GPIOB ,BIT7,OUTPUT) ;
+gpioPinDirection(SCK_PORT ,SCK_PIN,OUTPUT) ;
 		
 	/// enable SPI bit 6
 	SPCR |= Enable_SPI ;
 	
 }
 
-extern void _SPIInitSlave(SPI_clk clockSPI ){
-	//// status register
-	SPSR = 0 ;
+extern void _SPIInitSlave(SPI_clk clockSPI,SPI_mode phasePolarityMode,SPI_DataOrder dataorder  ){
+	//// clear status register
+	SPSR = ZERO ;
 	
 	/// clear control mode
 	
-	SPCR = 0 ;
-	/// enable SPI bit 6
-	SPCR |= Enable_SPI ;
+	SPCR = ZERO ;
+	
 	
 	// master or slave bit 4
 	SPCR |= Slave_SPI ;
 	
+	/// data order update
+	
+	SPCR|=dataorder ;
+	
 	//set clock
-	 clockSPI = Fosc16 ;
 	
 	SPCR|=clockSPI ;
 	
 	// set phase and polarity
-	SPCR |=mode1 ;
+	SPCR |=phasePolarityMode ;
 	
 	////// GPIO set output and input
-	// ss bit4
-	gpioPinDirection(GPIOB ,BIT4,INPUT) ;
+ // ss bit4
+ gpioPinDirection(SS_PORT ,SS_PIN,INPUT) ;
 
-	//MOSI bit5
+ //MOSI bit5
 
-	gpioPinDirection(GPIOB ,BIT5,INPUT) ;
+ gpioPinDirection(MOSI_PORT ,MOSI_PIN,INPUT) ;
 
-	//MISO bit6
+ //MISO bit6
 
-	gpioPinDirection(GPIOB ,BIT6,OUTPUT) ;
+ gpioPinDirection(MISO_PORT ,MISO_PIN,OUTPUT) ;
 
-	//SCK bit 7
+ //SCK bit 7
 
-	gpioPinDirection(GPIOB ,BIT7,INPUT) ;
+ gpioPinDirection(SCK_PORT ,SCK_PIN,INPUT) ;
 	
+	/// enable SPI bit 6
+	SPCR |= Enable_SPI ;
 	
 }
 

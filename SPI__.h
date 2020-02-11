@@ -14,11 +14,11 @@
 #include "registers.h"
 #include "gpio.h"
 
+#define ZERO 0 
+
 #define ENABLE 1
 #define DISABLE 0
 
-#define MASTER ENABLE
-#define SLAVE  DISABLE
 
 #define SCK_PORT  GPIOB
 #define MISO_PORT GPIOB
@@ -30,6 +30,11 @@
 #define MOSI_PIN BIT5
 #define SS_PIN   BIT4
 
+#define  Enable_SPI 0x40
+
+#define  Master_SPI 0x10
+
+#define Slave_SPI 0x00
 
 typedef enum SPI_clk{
 	Fosc4 = 0x00 ,
@@ -45,17 +50,17 @@ typedef enum SPI_mode{
 	mode4 = 0x0C 
 }SPI_mode;
 
+typedef enum SPI_DataOrder{
+	MSB = 0x00 ,
+	LSB = 0x20
+	
+	}SPI_DataOrder;
 
 
 
-#define  Enable_SPI 0x40 
 
-#define  Master_SPI 0x10
-
-#define Slave_SPI 0x00
-
-extern void _SPIInitMaster(SPI_clk clock );
-extern void _SPIInitSlave(SPI_clk clock );
+extern void _SPIInitMaster(SPI_clk clock ,SPI_mode phasePolarityMode,SPI_DataOrder dataorder  );
+extern void _SPIInitSlave(SPI_clk clock ,SPI_mode phasePolarityMode,SPI_DataOrder dataorder );
 
 
 extern void _SPITrancevier(char* data);
