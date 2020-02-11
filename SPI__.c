@@ -6,6 +6,7 @@
  */ 
 
 #include "SPI__.h"
+#include "timers.h"
 
 extern void _SPIInitMaster(SPI_clk clockSPI ){
 		//// status register
@@ -14,18 +15,16 @@ extern void _SPIInitMaster(SPI_clk clockSPI ){
 		/// clear control mode
 		
 		SPCR = 0 ;
-		/// enable SPI bit 6 
-		SPCR |= Enable_SPI ;
 		
 		// master or slave bit 4 
 		SPCR |= Master_SPI ; 
 		
 		//set clock
-		 clockSPI = Fosc16 ;
 		 
 		SPCR|=clockSPI ;
 		
-		// set phase and polarity 
+		// set phase bit2 and polarity bit3
+		
 		 SPCR |= 0x00;
 		 
 ////// GPIO set output and input 
@@ -44,6 +43,8 @@ gpioPinDirection(GPIOB ,BIT6,INPUT) ;
 
 gpioPinDirection(GPIOB ,BIT7,OUTPUT) ;
 		
+	/// enable SPI bit 6
+	SPCR |= Enable_SPI ;
 	
 }
 
@@ -66,7 +67,7 @@ extern void _SPIInitSlave(SPI_clk clockSPI ){
 	SPCR|=clockSPI ;
 	
 	// set phase and polarity
-	SPCR |= 0x00;
+	SPCR |=mode1 ;
 	
 	////// GPIO set output and input
 	// ss bit4
@@ -92,8 +93,10 @@ extern void _SPITrancevier(char* data){
 	if(SPCR&Master_SPI){
 		
 		/*Select the slave By pull down the SS pin */
-
+		
 		gpioPinWrite(GPIOB,BIT4,0);
+		
+		timer0DelayMs(1);
 
 	}
 	
@@ -101,7 +104,7 @@ extern void _SPITrancevier(char* data){
 
 	while (!(SPSR&(1<<7)));
 
-	return SPDR;
+	*data = SPDR;
 	
 }
 
